@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>词库</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!--你自己的样式文件 -->
+    <link href="css/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">        
+    <!-- 以下两个插件用于在IE8以及以下版本浏览器支持HTML5元素和媒体查询，如果不需要用可以移除 -->
+    <!--[if lt IE 9]>
+    <script src="http://apps.bdimg.com/libs/html5shiv/3.7/html5shiv.js"></script>
+    <script src="http://apps.bdimg.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        .control-panel .form-control {
+            border-radius: 0;
+        }
+        .changTable .modal-content {
+            border-radius: 0;
+            border: 0;
+        }
+        .changTable .form-control {
+            border-radius: 0;
+        }
+        .td-remark {
+            max-width: 250px;
+            word-break: break-all;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+    <body>
+        <!-- 顶部区域 -->
+        <div class="container-fluid header-fluid-top">
+            <div class="row">
+                <div class="container header-top">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-12">
+                            <a href="#">
+                                <img src="images/logo.png" alt="">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div class="navbar navbar-inverse nav-fluid-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand hidden-sm" href="javascript:">福克斯德</a>
+                </div>
+                <div class="navbar-collapse collapse" role="navigation">
+                    <ul class="nav navbar-nav">
+                        <nav-component></nav-component>
+                    </ul>
+                    <log-component></log-component>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区域 -->
+        <div class="container tableInfo marginTop" v-show="!searchResult">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-success">
+                        <div class="panel-heading"><h4><b>操作</b></h4></div>
+                        <div class="panel-body">
+                            <div class="form-horizontal control-panel">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">选择搜索条件</label>
+                                    
+                                    <div class="col-md-2">
+                                        <select class="form-control" v-model="search.status">
+                                            <option value="" selected>所有状态</option>
+                                            <option :value="st" v-for="st in search.statusList">                   {{st | statusFlilter}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" v-model="search.keyword" placeholder="输入关键字搜索" class="form-control">
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button @click="searchItem" class="btn btn-default" :disabled="searchBtn">搜索</button>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <a href="add-Thesaurus.html" class="btn btn-success btn-sm pull-right">添加项目</a>
+                                    </div>
+                                    <div class="col-md-1 pull-right">
+                                        <button class="btn btn-info btn-sm" @click="Reflesh">刷新</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-success" v-show="!searchResult">
+                        词条数:<strong class="text-warning">{{count}}</strong>　
+                        当前页:<strong class="text-warning">{{pageNow}}</strong>　
+                        总页数:<strong class="text-warning">{{countPage}}</strong>　
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container marginTop" v-show="searchResult">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-info">
+                        <b class="text-danger">搜索结果</b>　
+                        词条数:<strong class="text-warning">{{count}}</strong>　
+                        当前页:<strong class="text-warning">{{pageNow}}</strong>　
+                        总页数:<strong class="text-warning">{{countPage}}</strong>　
+                        <button class="btn btn-info btn-sm" @click="Reflesh">返回</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 表格 -->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h4><b>词库</b></h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <tr class="success text-success">
+                                        <th class="text-center">序号</th>
+                                        <th class="text-center">名称</th>
+                                        <th class="text-center td-remark">描述</th>
+                                        <th class="text-center">创建时间</th>
+                                        <th class="text-center">更新时间</th>
+                                        <th class="text-center">状态</th>
+                                        <th class="text-center">操作</th>
+                                    </tr>
+                                    <!-- template渲染 -->
+                                    <template v-for="item in list">
+
+                                        <!-- 条件渲染 -->
+                                        <template v-if="$index%2==1">
+                                            <tr class="warning">
+                                                <td class="text-center">{{$index | ListNum}}</td>
+                                                <td class="text-center">{{item.name}}</td>
+                                                <td class="text-center td-remark">{{item.remark}}</td>
+                                                <td class="text-center">{{item.created_time}}</td>
+                                                <td class="text-center">{{item.modified_time}}</td>
+                                                <td class="text-center">{{item.enabled | statusFlilter}}</td>
+                                                <td class="text-center">
+                                                    <a :href="'Thesaurus-info.html'+'?id='+item.id" target="_blank" class="btn btn-success btn-xs">详情</a>
+                                                    <button @click="deleteItem(item)" class="btn btn-xs btn-danger">删除</button>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                        <template v-else>
+                                            <tr>
+                                                <td class="text-center">{{$index | ListNum}}</td>
+                                                <td class="text-center">{{item.name}}</td>
+                                                <td class="text-center td-remark">{{item.remark}}</td>
+                                                <td class="text-center">{{item.created_time}}</td>
+                                                <td class="text-center">{{item.modified_time}}</td>
+                                                <td class="text-center">{{item.enabled | statusFlilter}}</td>
+                                                <td class="text-center">
+                                                    <a :href="'Thesaurus-info.html'+'?id='+item.id" target="_blank" class="btn btn-success btn-xs">详情</a>
+                                                    <button @click="deleteItem(item)" class="btn btn-xs btn-danger">删除</button>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </template>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 分页 -->
+        <div v-show="countPage>1" class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-4 text-center">
+                    <div class="form-inline">
+                        <button @click="goPrePage" :disabled="prePageBtn" class="btn btn-default">上一页</button>
+                        <button @click="goNextPage" :disabled="nextPageBtn" class="btn btn-default">下一页</button>
+                        <input type="number" v-model="jump" placeholder="页码" min="1" class="form-control" style="width:80px;">
+                        <button class="btn btn-info" @click="goJump" :disabled="jumpBtn">跳转</button>
+                        总页数:<strong class="text-warning">{{countPage}}</strong>　
+                        当前页:<strong class="text-warning">{{pageNow}}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <!-- <pre>{{$data|json}}</pre> -->
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div class="container-fluid footer-fluid">
+            <div class="contaier">
+                <div class="row">
+                    <div class="col-lg-12">
+                        © All rights reserved 深圳福克斯德信息咨询有限公司
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 如果要使用Bootstrap的js插件，必须先调入jQuery -->
+        <script src="js/jquery.js"></script>
+        <script src="js/vue.js"></script>
+        <script src="js/cookie.js"></script>
+        <!-- 包括所有bootstrap的js插件或者可以根据需要使用的js插件调用　-->
+        <script src="js/bootstrap.min.js"></script>
+        <script src='js/layer.js'></script>
+        <!-- 检测登录状态 -->
+        <script src='js/control.js'></script>
+        <script src='js/serverUrl.js'></script>
+        <script src='js/navTpl.js'></script>
+        <script src='js/Thesaurus.js'></script>
+    </body>
+</html>

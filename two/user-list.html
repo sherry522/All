@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>用户管理</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!--你自己的样式文件 -->
+    <link href="css/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">        
+    <!-- 以下两个插件用于在IE8以及以下版本浏览器支持HTML5元素和媒体查询，如果不需要用可以移除 -->
+    <!--[if lt IE 9]>
+    <script src="http://apps.bdimg.com/libs/html5shiv/3.7/html5shiv.js"></script>
+    <script src="http://apps.bdimg.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        
+    </style>
+</head>
+    <body>
+        <!-- 顶部区域 -->
+        <div class="container-fluid header-fluid-top">
+            <div class="row">
+                <div class="container header-top">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-12">
+                            <a href="#">
+                                <img src="images/logo.png" alt="">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div class="navbar navbar-inverse nav-fluid-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand hidden-sm" href="javascript:">福克斯德</a>
+                </div>
+                <div class="navbar-collapse collapse" role="navigation">
+                    <ul class="nav navbar-nav">
+                        <nav-component></nav-component>
+                    </ul>
+                    <log-component></log-component>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区域 -->
+        <div class="container-fluid marginTop">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading"><h4><b>用户</b></h4></div>
+                        <div class="panel-body">
+                            <div class="col-md-12" v-show="!searchResult">
+                                <div class="alert alert-info">
+                                        用户数:<strong class="text-warning">{{count}}</strong>　
+                                        当前页:<strong class="text-warning">{{pageNow}}</strong>　
+                                        总页数:<strong class="text-warning">{{countPage}}</strong>　
+                                </div>
+                            </div>
+                            <div class="col-md-12" v-show="searchResult">
+                                <div class="alert alert-info">
+                                        <b class="text-danger">搜索结果</b>　
+                                        表格数:<strong class="text-warning">{{count}}</strong>　
+                                        当前页:<strong class="text-warning">{{pageNow}}</strong>　
+                                        总页数:<strong class="text-warning">{{countPage}}</strong>　
+                                        <button class="btn btn-info btn-sm" @click="Reflesh">返回</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-horizontal control-panel">
+                                    <div class="form-group">
+                                        <label class="col-md-1 control-label">选择搜索条件</label>
+                                        <div class="col-md-1">
+                                            <select class="form-control" v-model="enabled">
+                                                <option value="1" selected>启用</option>
+                                                <option value="0">停用</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input v-model="search" type="text" placeholder="输入用户名" class="form-control">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button @click='searchuse' class="btn btn-default">搜索</button>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <a href="add_user.html" class="btn btn-success">增加用户</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <tr class="info text-info ">
+                                            <th class="text-center">序号</th>
+                                            <th class="text-center">用户名</th>
+                                            <th class="text-center">真实姓名</th>
+                                            <th class="text-center">部门</th>
+                                            <th class="text-center">角色</th>
+                                            <th class="text-center">邮箱</th>
+                                            <th class="text-center">手机</th>
+                                            <th class="text-center">操作</th>
+                                        </tr>
+                                        <!-- template渲染 -->
+                                        <template v-for="use in alluser">
+
+                                            <!-- 条件渲染 -->
+                                            <template v-if="$index%2==1">
+                                                <tr class="warning">
+                                                    <td class="text-center">{{$index | ListNum}}</td>
+                                                    <td class="text-center">{{use.username}}</td>
+                                                    <td class="text-center">{{use.real_name}}</td>
+                                                    <td class="text-center">{{use.orgs}}</td>
+                                                    <td class="text-center">{{use.roles}}</td>
+                                                    <td class="text-center">{{use.email}}</td>
+                                                    <td class="text-center">{{use.mobile}}</td>
+                                                    <td class="text-center">
+                                                        <a :href="'usermessage.html'+'?id='+use.id" class="btn btn-success btn-xs">详情</a>
+                                                        <button @click="deleteuse(use)" class="btn btn-xs btn-danger">删除</button>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                            <template v-else>
+                                                <tr>
+                                                    <td class="text-center">{{$index | ListNum}}</td>
+                                                    <td class="text-center">{{use.username}}</td>
+                                                    <td class="text-center">{{use.real_name}}</td>
+                                                    <td class="text-center">{{use.orgs}}</td>
+                                                    <td class="text-center">{{use.roles}}</td>
+                                                    <td class="text-center">{{use.email}}</td>
+                                                    <td class="text-center">{{use.mobile}}</td>
+                                                    <td class="text-center">
+                                                        <a :href="'usermessage.html'+'?id='+use.id" class="btn btn-success btn-xs">详情</a>
+                                                        <button @click="deleteuse(use)" class="btn btn-xs btn-danger">删除</button>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </template>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 分页 -->
+
+        <div v-show="countPage>1" class="container-fluid">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-4 text-center">
+                    <div class="form-inline">
+                        <button @click="goPrePage" :disabled="prePageBtn" class="btn btn-default">上一页</button>
+                        <button @click="goNextPage" :disabled="nextPageBtn" class="btn btn-default">下一页</button>
+                        <input type="number" v-model="jump" placeholder="页码" min="1" class="form-control" style="width:80px;">
+                        <button class="btn btn-info" @click="goJump" :disabled="jumpBtn">跳转</button>
+                        总页数:<strong class="text-warning">{{countPage}}</strong>　
+                        当前页:<strong class="text-warning">{{pageNow}}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <hr>
+                <!-- <pre>{{$data|json}}</pre> -->
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div class="container-fluid footer-fluid">
+            <div class="contaier">
+                <div class="row">
+                    <div class="col-lg-12">
+                        © All rights reserved 深圳福克斯德信息咨询有限公司
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 如果要使用Bootstrap的js插件，必须先调入jQuery -->
+        <script src="js/jquery.js"></script>
+        <script src="js/vue.js"></script>
+        <script src="js/cookie.js"></script>
+        <!-- 包括所有bootstrap的js插件或者可以根据需要使用的js插件调用　-->
+        <script src="js/bootstrap.min.js"></script>
+        <script src='js/layer.js'></script>
+        <!-- 检测登录状态 -->
+        <script src='js/control.js'></script>
+        <script src='js/serverUrl.js'></script>
+        <script src='js/navTpl.js'></script>
+        <script src='js/user-list.js'></script>
+    </body>
+</html>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>角色管理</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!--你自己的样式文件 -->
+    <link href="css/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">        
+    <!-- 以下两个插件用于在IE8以及以下版本浏览器支持HTML5元素和媒体查询，如果不需要用可以移除 -->
+    <!--[if lt IE 9]>
+    <script src="http://apps.bdimg.com/libs/html5shiv/3.7/html5shiv.js"></script>
+    <script src="http://apps.bdimg.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+            background-color: #428bca!important;
+            color: #fff!important;
+        }
+        .new-alert {
+            line-height: 24px!important;
+            padding-top: 5px!important;
+            padding-bottom: 5px!important;
+            margin-bottom: 0!important;
+        }
+        .bootstrap-tagsinput {
+            width: 100%;
+            min-height: 32px;
+            background-color: #ccc;
+            border: 1px solid #ccc;
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+            display: inline-block;
+            padding: 4px 6px;
+            color: #555;
+            vertical-align: middle;
+            border-radius: 4px;
+            max-width: 100%;
+            line-height: 22px;
+        }
+        .bootstrap-tagsinput .tag {
+            margin-right: 2px;
+            color: white;
+        }
+        .bootstrap-tagsinput .tag [data-role="remove"] {
+            margin-left: 8px;
+            cursor: pointer;
+        }
+        .bootstrap-tagsinput .tag [data-role="remove"]:after {
+            content: "x";
+            padding: 0px 2px;
+        }
+        .pors .input-list,.pors .cate-list {
+            top: 34px;
+            left: 15px;
+            position: absolute;
+            z-index: 666;
+            list-style: none;
+            padding-left: 0;
+            border: 1px solid #ccc;
+            border-top: transparent;
+            background-color: #fff;
+        }
+        .pors .cate-list li {
+            line-height: 32px;
+            text-indent: 12px;
+            border-bottom: 1px solid #ddd;
+            color: #8a6d3b;
+            font-size: 12px;
+        }
+        .pors .cate-list li:hover {
+            background-color: #ECF0F1;
+            cursor: pointer;
+        }
+        .paddingLeft {
+            padding-left: 0;
+        }
+        .searchShadow {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .searchShadow:focus {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-color: #ccc;
+        }
+        .searchCompent {
+            display: none;
+        }
+        .height {
+            overflow: auto;
+        }
+        .tree {
+            margin-top: 20px;
+        }
+        .tree,.tree ul,.tree ul li {
+            list-style: none;
+        }
+        .item li {
+            position: relative;
+            padding-top: 10px;
+        }
+        .item li::before,.item li::after {
+            content: '';
+            left: -30px;
+            position: absolute;
+            right: auto
+        }
+        .item li::before {
+            border-left: 1px solid #cac8c8;
+            bottom: 50px;
+            height: 100%;
+            top: 0;
+            width: 1px
+        }
+        .item li::after {
+            border-top: 1px solid #cac8c8;
+            height: 20px;
+            top: 26px;
+            width: 26px
+        }
+        .tree .item .selected {
+            padding: 6px 0;
+        }
+        .text-white {
+            color: #fff;
+        }
+        .adminCate .modal-content {
+            border-radius: 0;
+            border: 0;
+        }
+        .adminCate .form-control {
+            border-radius: 0;
+        }
+        .caret-ii {
+            padding: 0 5px;
+        }
+        .item .tree-node {
+            margin-left: -2px;
+            line-height: 30px;
+            cursor: pointer;
+        }
+        .item .tree-node:hover {
+            background: #e5e9f2;
+        }
+        .item .node-selected  {
+            color: #454f75;
+            background: #e5e9f2;
+        }
+    </style>
+</head>
+    <body>
+        <!-- 顶部区域 -->
+        <div class="container-fluid header-fluid-top">
+            <div class="row">
+                <div class="container header-top">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-12">
+                            <a href="#">
+                                <img src="images/logo.png" alt="">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div class="navbar navbar-inverse nav-fluid-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand hidden-sm" href="javascript:">福克斯德</a>
+                </div>
+                <div class="navbar-collapse collapse" role="navigation">
+                    <ul class="nav navbar-nav">
+                        <nav-component></nav-component>
+                    </ul>
+                    <log-component></log-component>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区域 -->
+        <div class="container-fluid marginTop">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-defaault">
+                        <div class="panel-heading"><h4><b class="text-primary">角色管理</b></h4></div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <ul id="myTab" class="nav nav-tabs" role="tablist" style="background-color: #fff;">
+                        <li role="presentation">
+                            <a href="#home" id="home-tab" role="tab" data-toggle="tab" aria-controls="home" aria-expanded="false">组织机构</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#group" role="tab" id="group-tab" data-toggle="tab" aria-controls="group" aria-expanded="false">角色添加</a>
+                        </li>
+                        <li @click='getlist' role="presentation" class="active">
+                            <a href="#profile" role="tab" id="profile-tab" data-toggle="tab" aria-controls="profile" aria-expanded="true">角色列表</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-12 marginTop">
+                    <div id="myTabContent" class="tab-content">
+                        <!-- 角色在机构的位置 -->
+                        <div role="tabpanel" class="tab-pane fade in" id="home" aria-labelledby="home-tab">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <div class="col-md-12">
+                                                <ul class="tree">
+                                                    <item
+                                                      class="item"
+                                                      :model="son">
+                                                    </item>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 树形目录 -->
+                        <script type="text/x-template" id="item-template">
+                            <li>
+                                <div class="tree-node" :title="model.introduce">
+                                    <span v-show="isFolder">
+                                        <span class="fa fa-2x caret-ii fa-caret-right vertical" @click="toggle(model)" v-show="!open"></span>
+                                        <span class="fa fa-2x caret-ii fa-caret-down vertical" @click="toggle(model)" v-show="open"></span>
+                                    </span>
+                                    <span class="selected vertical" @click="selected(model)">
+                                        {{model.name}}
+                                    </span>
+                                </div>
+                                <span v-for="roll in model.roles" class="selected vertical text-primary fa fa-user" @click="selected(model)">
+                                    {{roll.rname}}
+                                </span>
+                                <ul v-show="open" v-if="isFolder">
+                                    <item
+                                        class="item"
+                                        v-for="model in model.son"
+                                        :model="model">
+                                    </item>
+                                </ul>
+                            </li>
+                        </script>
+                        <!-- 角色添加 -->
+                        <div role="tabpanel" class="tab-pane fade in" id="group" aria-labelledby="group-tab">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading"><h4><b>角色添加</b></h4></div>
+                                        <div class="panel-body">
+                                            <div class="col-md-12">
+                                                <div class="form-horizontal">
+                                                    <div class="form-group">
+                                                        <label class="col-sm-2 control-label"><span class="text-red">*</span>角色名称:</label>
+                                                        <div class="col-sm-4">
+                                                            <input type="text" v-model='addname' placeholder="输入中文名" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="col-sm-2 control-label"><span class="text-red">*</span>所属机构</label>
+                                                        <div class="col-sm-4">
+                                                            <div class="bootstrap-tagsinput height">
+                                                                <span class="tag label label-info" v-for="org in orgSelect">
+                                                                    {{org.name}}<span data-role="remove" @click="removeOrg(org)"></span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-1">
+                                                            <button class="btn btn-info btn-sm searchBtn">搜索</button>
+                                                        </div>
+                                                        <div class="col-sm-3 pors searchCompent">
+                                                            <input type="text" class="form-control searchShadow searchCate " placeholder="输入关键字搜索类目">
+                                                            <ul class="cate-list">
+                                                                <template v-for="one in oneList" v-if="$index<=9">
+                                                                    <li @click="selectOne(one)">
+                                                                        {{one.name}}
+                                                                    </li>
+                                                                </template>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-sm-1 text-left paddingLeft searchCompent">
+                                                            <button class="btn btn-default closeBtn searchShadow">
+                                                                <i class="fa fa-close"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="col-sm-2 control-label">角色说明:</label>
+                                                        <div class="col-sm-4">
+                                                            <textarea v-model='addremark' class="form-control" cols="30" rows="5"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-1 col-md-offset-2">
+                                                        <button @click="addrole" class="btn btn-success">添加</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 角色管理 -->
+                        <div role="tabpanel" class="tab-pane active fade in" id="profile" aria-labelledby="profile-tab">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading"><h4><b>角色列表</b></h4></div>
+                                        <div class="panel-body">
+                                            <div class="col-md-12">
+                                                <table class="table table-bordered">
+                                                    <tr>
+                                                        <th class="text-center">序号</th>
+                                                        <th class="text-center">角色名称</th>
+                                                        <th class="text-center">所在机构</th>
+                                                        <th class="text-center">角色备注</th>
+                                                        <th class="text-center">角色状态</th>
+                                                        <th class="text-center">操作</th>
+                                                    </tr>
+                                                    <template v-for="role in roledata">
+
+                                                        <!-- 条件渲染 -->
+                                                        <template v-if="$index%2==1">
+                                                            <tr class="warning">
+                                                                <td class="text-center">{{$index+1}}</td>
+                                                                <td class="text-center">{{role.name}}</td>
+                                                                <td class="text-center">{{role.org_name}}</td>
+                                                                <td class="text-center">{{role.remark}}</td>
+                                                                <td class="text-center">{{role.enabled |staFlilter}}</td>
+                                                                <td class="text-center">
+                                                                    <button class="btn btn-info btn-xs" @click="edit(role,$index)" >修改</button>
+                                                                    <a :href="'Permissions.html'+'?id='+role.id" class="btn btn-xs btn-info" target="_blank">权限</a>
+                                                                    <button @click="delerole(role)" class="btn btn-danger btn-xs">删除</button>
+                                                                </td>
+                                                            </tr>
+                                                        </template>
+                                                        <template v-else>
+                                                            <tr>
+                                                                <td class="text-center">{{$index+1}}</td>
+                                                                <td class="text-center">{{role.name}}</td>
+                                                                <td class="text-center">{{role.org_name}}</td>
+                                                                <td class="text-center">{{role.remark}}</td>
+                                                                <td class="text-center">{{role.enabled | staFlilter}}</td>
+                                                                <td class="text-center">
+                                                                    <button class="btn btn-info btn-xs" @click="edit(role,$index)" >修改</button>
+                                                                    <a :href="'Permissions.html'+'?id='+role.id" class="btn btn-xs btn-info" target="_blank">权限</a>
+                                                                    <button @click="delerole(role)" class="btn btn-danger btn-xs">删除</button>
+                                                                </td>
+                                                            </tr>
+                                                        </template>
+                                                    </template>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 编辑角色信息 -->
+        <div class="modal editTable fade" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary">
+                        <h4 class="modal-title text-center">编辑角色</h4>
+                        <button type="button" @click="cancel" class="close close-positon"><span aria-hidden="true"><i class="fa fa-close"></i></span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-horizontal">
+                                        <div class="form-group">
+                                            <label class="col-md-2 control-label">角色名称</label>
+                                            <div class="col-md-8">
+                                                <input type="text" v-model='editOne.name' placeholder="角色名称" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-2 control-label">角色状态</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control" v-model="editOne.enabled">
+                                                    <option value="1">启用</option>
+                                                    <option value="0">停用</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">*</span>所属机构</label>
+                                            <div class="col-sm-8">
+                                                <div class="bootstrap-tagsinput height">
+                                                    <span class="tag label label-info" v-for="orgd in orgds">
+                                                        {{orgd.name}}<span data-role="remove" @click="removeOrgd(orgd)"></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button class="btn btn-info btn-sm searchBtn">搜索</button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-8 pors searchCompent col-sm-offset-2">
+                                                <input type="text" class="form-control searchShadow searchCate " placeholder="输入关键字搜索类目">
+                                                <ul class="cate-list">
+                                                    <template v-for="one in oneList" v-if="$index<=9">
+                                                        <li @click="selectOned(one)">
+                                                            {{one.name}}
+                                                        </li>
+                                                    </template>
+                                                </ul>
+                                            </div>
+                                            <div class="col-sm-1 text-left paddingLeft searchCompent">
+                                                <button class="btn btn-default closeBtn searchShadow">
+                                                    <i class="fa fa-close"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-2 control-label">角色备注</label>
+                                            <div class="col-sm-8">
+                                                <textarea v-model="editOne.remark" class="form-control" cols="30" rows="5" ></textarea>
+                                            </div>
+                                        </div>  
+                                    </div>
+                                    <div class="col-md-2 col-md-offset-5">
+                                        <button @click="subrole" class="btn btn-success">保存</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <hr>
+                <!-- <pre>{{$data|json}}</pre> -->
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div class="container-fluid footer-fluid">
+            <div class="contaier">
+                <div class="row">
+                    <div class="col-lg-12">
+                        © All rights reserved 深圳福克斯德信息咨询有限公司
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 如果要使用Bootstrap的js插件，必须先调入jQuery -->
+        <script src="js/jquery.js"></script>
+        <script src="js/vue.js"></script>
+        <script src="js/cookie.js"></script>
+        <!-- 包括所有bootstrap的js插件或者可以根据需要使用的js插件调用　-->
+        <script src="js/bootstrap.min.js"></script>
+        <script src='js/layer.js'></script>
+        <!-- 检测登录状态 -->
+        <script src='js/control.js'></script>
+        <script src='js/serverUrl.js'></script>
+        <script src='js/navTpl.js'></script>
+        <script src='js/group.js'></script>
+    </body>
+</html>

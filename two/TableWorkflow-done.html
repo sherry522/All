@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>资料表流程-确认启用</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!--你自己的样式文件 -->
+    <link href="css/index.css" rel="stylesheet">
+    <link href="css/handsontable.full.css" rel="stylesheet">
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">        
+    <!-- 以下两个插件用于在IE8以及以下版本浏览器支持HTML5元素和媒体查询，如果不需要用可以移除 -->
+    <!--[if lt IE 9]>
+    <script src="http://apps.bdimg.com/libs/html5shiv/3.7/html5shiv.js"></script>
+    <script src="http://apps.bdimg.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        .tableDetail .label {
+            font-size: 90%;
+        }
+        .fixed-top {
+            position: fixed;
+            right: 0;
+            left: 0;
+            top: 0;
+            z-index: 1030;
+            background-color: #ecf0f5;
+            border-bottom: 1px solid #ccc;
+        }
+        .pullUP {
+            color: #777;
+            position: absolute;
+            bottom: -26px;
+            left: 50%;
+            margin-left: -20px;
+            width: 40px;
+            height: 26px;
+            background-color: rgba(221, 221, 221, .8);
+            text-align: center;
+            line-height: 34px;
+            cursor: pointer;
+        }
+        .pullDown {
+            color: #777;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            margin-left: -20px;
+            width: 40px;
+            height: 26px;
+            background-color: rgba(221, 221, 221, .8);
+            text-align: center;
+            line-height: 34px;
+            cursor: pointer;
+            z-index: 6;
+        }
+        #table {
+            margin-top: 260px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .handsontable td {
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap !important;
+        }
+        .handsontable .htDimmed {
+            color: #333;
+        }
+        .ht_clone_left .htCore  th,.ht_clone_left .htCore  td {
+            background-color: #d9edf7;
+            /*background-color: #c4d4e8;*/
+        }
+    </style>
+</head>
+    <body>
+        <div class="pullDown">
+            <i class="fa fa-2x fa-angle-down" aria-hidden="true"></i>
+        </div>
+
+        <!-- 主内容区域 -->
+        <div class="container-fluid fixed-top">
+            <div class="pullUP">
+                <i class="fa fa-2x fa-angle-up" aria-hidden="true"></i>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading"><h4>资料表信息</h4></div>
+                        <div class="panel-body">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p>
+                                            <label class="text-primary">表格编号：</label>
+                                            <span class="text-muted">{{info.form_no}}</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p>
+                                            <label class="text-primary">表格名称：</label>
+                                            <span class="text-muted">{{info.title}}</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p>
+                                            <label class="text-primary">产品类目：</label>
+                                            <span class="text-muted">{{info.name}}</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p>
+                                            <label class="text-primary">使用模板:</label>
+                                            <span class="text-muted">{{info.tempname}}</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p>
+                                            <label class="text-primary">客户名称:</label>
+                                            <span class="text-muted">{{info.client_name}}</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p>
+                                            <label class="text-primary">产品数量统计:</label>
+                                            <span class="text-muted">{{info.productCount}}</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <a href="Table-info.html" class="btn btn-info btn-sm">返回首页</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="table"></div>
+        
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 text-center" style="margin-top: 10px;">
+                    <!-- <button class="btn btn-primary" @click="downloadTable" :disabled="downloadBtn">       <i class="fa fa-download" aria-hidden="true"></i>下载表格
+                    </button> -->
+                    <button class="btn btn-info" v-show="info.status_code | startBtn" @click="startTable">启用表格</button>
+                    <button @click="takeBack" class="btn btn-default">撤销</button>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+        <div class="container">
+            <div class="row">
+                <!-- <pre>{{$data|json}}</pre> -->
+            </div>
+        </div>
+
+        <script src="js/jquery.js"></script>
+        <script src="js/vue.js"></script>
+        <script src="js/cookie.js"></script>
+        <script src="js/handsontable.full.min-pro.js"></script>
+        <script src='js/layer.js'></script>
+        <!-- 检测登录状态 -->
+        <script src='js/control.js'></script>
+        <script src='js/serverUrl.js'></script>
+        <script src='js/navTpl.js'></script>
+        <script src='js/TableWorkflow-done.js'></script>
+    </body>
+</html>
